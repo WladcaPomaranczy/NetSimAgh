@@ -2,7 +2,9 @@
 
 class PackageQueue{
 + PackageQueue(PackageQueueType)
++ PackageQueue(PackageQueueType, std::std::list<Package>)
 - package_queue: std::list<Package>
+- package_queue_type: PackageQueueType
 }
 
 interface IPackageQueue{
