@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
-
+#include "../NetSim (produkty i ich przechowywanie) - rozwiązanie zadań/incld/package.hxx"
+#include "../NetSim (produkty i ich przechowywanie) - rozwiązanie zadań/incld/storage_types.hxx"
 
 TEST(PackageTest, IsAssignedIdLowest) {
     // przydzielanie ID o jeden większych -- utworzenie dwóch obiektów pod rząd
