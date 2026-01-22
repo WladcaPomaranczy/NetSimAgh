@@ -1,6 +1,5 @@
 #include <stdexcept>
 #include "../NetSim (produkty i ich przechowywanie) - rozwiązanie zadań/incld/storage_types.hxx"
-#include "../NetSim (produkty i ich przechowywanie) - rozwiązanie zadań/incld/package.hxx"
 
 Package PackageQueue::pop() {
     if (this->empty()) {
