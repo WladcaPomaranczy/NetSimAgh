@@ -1,5 +1,11 @@
 #include <gtest/gtest.h>
 
+#include "types.hxx"
+#include "package.hxx"
+#include "storage_types.hxx"
+#include "nodes.hxx"
+
+
 TEST(WorkerTest, HasBuffer) {
     // Test scenariusza opisanego na stronie:
     // http://home.agh.edu.pl/~mdig/dokuwiki/doku.php?id=teaching:programming:soft-dev:topics:net-simulation:part_nodes#bufor_aktualnie_przetwarzanego_polproduktu
