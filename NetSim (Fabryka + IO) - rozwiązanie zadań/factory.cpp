@@ -1,6 +1,9 @@
 #include "factory.hxx"
 #include "nodes.hxx"
 
+
+#include "types.hxx"
+
 #include <map>
 #include <stdexcept>
 
@@ -19,49 +22,43 @@ bool has_reachable_storehouse(
 
     const auto& prefs = sender->receiver_preferences().get_preferences();
     if (prefs.empty())
-        throw std::logic_error("Brak odbiorcow");
+        return false;
 
     for (const auto& [receiver, prob] : prefs) {
+
         if (receiver->get_receiver_type() == ReceiverType::STOREHOUSE) {
-            colors[sender] = NodeColor::VERIFIED;
-            return true;
+            continue;
         }
 
-        // receiver = Worker (czyli też PackageSender)
         auto next_sender = dynamic_cast<const PackageSender*>(receiver);
-        if (!next_sender) continue;
+        if (!next_sender)
+            return false;
 
-        if (has_reachable_storehouse(next_sender, colors)) {
-            colors[sender] = NodeColor::VERIFIED;
-            return true;
-        }
+        if (!has_reachable_storehouse(next_sender, colors))
+            return false;
     }
 
-    return false;
+    colors[sender] = NodeColor::VERIFIED;
+    return true;
 }
 
 //FACTORY
 bool Factory::is_consistent() const
 {
-    std::map<const PackageSender*, NodeColor> colors;
+    for (const auto& r : ramps_) {
+        std::map<const PackageSender*, NodeColor> colors;
 
-    for (const auto& r : ramps_)
-        colors[&r] = NodeColor::UNVISITED;
+        for (const auto& rr : ramps_)
+            colors[&rr] = NodeColor::UNVISITED;
+        for (const auto& w : workers_)
+            colors[&w] = NodeColor::UNVISITED;
 
-    for (const auto& w : workers_)
-        colors[&w] = NodeColor::UNVISITED;
-
-    try {
-        for (const auto& r : ramps_) {
-            if (!has_reachable_storehouse(&r, colors))
-                return false;
-        }
-    } catch (...) {
-        return false;
+        if (!has_reachable_storehouse(&r, colors))
+            return false;
     }
-
     return true;
 }
+
 
 void Factory::do_deliveries(Time t)
 {
@@ -136,3 +133,6 @@ void Factory::remove_storehouse(ElementID id)
     remove_receiver(ramps_, id);
     storehouses_.remove_by_id(id);
 }
+
+
+

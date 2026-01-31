@@ -1,5 +1,13 @@
 #include <gtest/gtest.h>
 
+#include "factory.hxx"
+#include "nodes.hxx"
+#include "types.hxx"
+#include "storage_types.hxx"
+#include "package.hxx"
+#include "helpers.hxx"
+
+
 TEST(FactoryTest, IsConsistentCorrect) {
     // R -> W -> S
 

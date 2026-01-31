@@ -1,13 +1,16 @@
 #ifndef FACTORY_HXX
 #define FACTORY_HXX
 
+#include <istream>
 #include <list>
 #include <algorithm>
 
 #include "types.hxx"
 #include "nodes.hxx"
 
-//NodeCollection
+// =====================
+// NodeCollection
+// =====================
 template <class Node>
 class NodeCollection {
 public:
@@ -50,40 +53,75 @@ private:
     container_t nodes_;
 };
 
-//Factory
+// =====================
+// NodeColor
+// =====================
+enum class NodeColor {
+    UNVISITED,
+    VISITED,
+    VERIFIED
+};
+
+// =====================
+// Factory
+// =====================
 class Factory {
 public:
-    //consistency
     bool is_consistent() const;
 
-    //simulation
     void do_deliveries(Time t);
     void do_package_passing();
     void do_work(Time t);
 
-    //ramps
     void add_ramp(Ramp&& ramp);
     void remove_ramp(ElementID id);
     Ramp* find_ramp_by_id(ElementID id);
 
-    //workers
     void add_worker(Worker&& worker);
     void remove_worker(ElementID id);
     Worker* find_worker_by_id(ElementID id);
 
-    //storehouses
     void add_storehouse(Storehouse&& storehouse);
     void remove_storehouse(ElementID id);
     Storehouse* find_storehouse_by_id(ElementID id);
+
+    // =====ITERATORY=====
+
+    auto ramp_cbegin() const { return ramps_.cbegin(); }
+    auto ramp_cend()   const { return ramps_.cend(); }
+
+    auto worker_cbegin() const { return workers_.cbegin(); }
+    auto worker_cend()   const { return workers_.cend(); }
+
+    auto storehouse_cbegin() const { return storehouses_.cbegin(); }
+    auto storehouse_cend()   const { return storehouses_.cend(); }
 
 private:
     NodeCollection<Ramp> ramps_;
     NodeCollection<Worker> workers_;
     NodeCollection<Storehouse> storehouses_;
 
-    //helper do czyszczenia połączeń (zrobimy później)
     template <class Node>
     void remove_receiver(NodeCollection<Node>& collection, ElementID id);
 };
 
-#endif
+// =====================
+// IO
+// =====================
+Factory load_factory_structure(std::istream& is);
+
+template <class Node>
+void Factory::remove_receiver(NodeCollection<Node>& collection, ElementID id)
+{
+    for (auto& node : collection) {
+        node.receiver_preferences_.remove_receiver(
+            find_worker_by_id(id)
+        );
+        node.receiver_preferences_.remove_receiver(
+            find_storehouse_by_id(id)
+        );
+    }
+}
+
+
+#endif // FACTORY_HXX
