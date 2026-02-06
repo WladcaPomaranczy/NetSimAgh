@@ -1,0 +1,51 @@
+@startuml
+
+class PackageQueue{
++ PackageQueue(PackageQueueType)
++ PackageQueue(PackageQueueType, std::std::list<Package>)
+- package_queue: std::list<Package>
+- package_queue_type: PackageQueueType
+}
+
+interface IPackageQueue{
++ *pop*() : Package
++ *get_queue_type*() : PackageQueueType {query}
+}
+
+interface IPackageStockpile{
++ *push*(Package&&)
++ *empty*(): bool {query}
++ *size*(): size_type {query}
++ const_iterator: std::list<Package>::const_iterator <<type alias>>
++ *begin*(): const_iterator
++ *end*(): const_iterator
++ ~IPackageStockPile()
+}
+
+IPackageQueue <|.. PackageQueue
+
+IPackageStockpile <|.. IPackageQueue
+
+enum PackageQueueType{
+FIFO
+LIFO
+}
+
+IPackageQueue ..> PackageQueueType
+
+class Package {
++Package()
++Package(ElementID)
++Package(Package&&)
++operator=(Package&&):Package&
++get_id(): ElementID {query}
++~Package()
+
+-_assigned_IDs_: std::set<ElementID>
+-_free_IDs_: std::set<ElementID>
+-ID: ElementID
+}
+
+class ElementID << (T,orchid) primitive>>
+
+@enduml
